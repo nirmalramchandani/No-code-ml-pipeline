@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const limit = searchParams.get("limit") || "50";
 
-    const backendRes = await fetch(`http://127.0.0.1:8000/preview-data?limit=${limit}`, {
+    const backendRes = await fetch(`/api/preview-data?limit=${limit}`, {
         cache: 'no-store' 
     });
 

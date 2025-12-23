@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const backendRes = await fetch("http://127.0.0.1:8000/revert-preprocess", {
+    const backendRes = await fetch("/api/revert-preprocess", {
       method: "POST",
     });
 

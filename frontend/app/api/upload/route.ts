@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     
     // Forward to FastAPI
-    const backendRes = await fetch("http://127.0.0.1:8000/upload", {
+    const backendRes = await fetch("/api/upload", {
       method: "POST",
       body: formData, // fetch automatically sets multipart headers if body is FormData
     });
