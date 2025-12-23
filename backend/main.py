@@ -29,67 +29,11 @@ class SplitRequest(BaseModel):
 class TrainRequest(BaseModel):
     model: str
 
-@app.post("/split")
-def split_data(request: SplitRequest):
-    try:
-        result = pipeline.split_data_step(request.splitRatio)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/split-info")
-def get_split_info():
-    try:
-        result = pipeline.get_split_info()
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to retrieve split info.")
-
-@app.post("/train")
-def train_model(request: TrainRequest):
-    try:
-        # Pass only model string now, as splitting is done.
-        # But previous pipeline.train_model took config dict? 
-        # Check pipeline.train_model signature in previous step. 
-        # It takes `model_type: str`. 
-        # The previous /train implementation did: config = request.dict(); result = pipeline.train_model(config)
-        # I need to fix that calling convention if pipeline.train_model expects a string.
-        # Let's fix it here.
-        result = pipeline.train_model(request.model)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 class PreprocessRequest(BaseModel):
     preprocess: str
 
 class SelectTargetRequest(BaseModel):
     targetColumn: str
-
-@app.post("/select-target")
-def select_target(request: SelectTargetRequest):
-    try:
-        result = pipeline.select_target(request.targetColumn)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/target-info")
-def get_target_info():
-    try:
-        result = pipeline.get_target_info()
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to retrieve target info.")
 
 @app.get("/health", response_model=HealthResponse)
 def health_check():
@@ -127,6 +71,26 @@ def get_preview_data(limit: int = 50):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to retrieve preview data.")
 
+@app.post("/select-target")
+def select_target(request: SelectTargetRequest):
+    try:
+        result = pipeline.select_target(request.targetColumn)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/target-info")
+def get_target_info():
+    try:
+        result = pipeline.get_target_info()
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to retrieve target info.")
+
 @app.post("/preprocess")
 def preprocess_data(request: PreprocessRequest):
     try:
@@ -157,7 +121,35 @@ def revert_preprocess():
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to revert preprocessing.")
 
+@app.post("/split")
+def split_data(request: SplitRequest):
+    try:
+        result = pipeline.split_data_step(request.splitRatio)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/split-info")
+def get_split_info():
+    try:
+        result = pipeline.get_split_info()
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to retrieve split info.")
+
+@app.post("/train")
+def train_model(request: TrainRequest):
+    try:
+        result = pipeline.train_model(request.model)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -5,7 +5,8 @@ import { usePipelineStore } from "../../store/usePipelineStore";
 import { clsx } from "clsx";
 
 export default function UploadStep() {
-  const { setStep, setDatasetInfo } = usePipelineStore();
+  // FIX: Destructure 'reset' from the store
+  const { setStep, setDatasetInfo, reset } = usePipelineStore();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +20,9 @@ export default function UploadStep() {
 
   const handleUpload = async () => {
     if (!file) return;
+
+    // FIX: Reset the pipeline state (clears old preprocessing/model flags)
+    reset();
 
     setLoading(true);
     setError(null);

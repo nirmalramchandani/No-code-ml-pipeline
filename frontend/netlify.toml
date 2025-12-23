@@ -1,0 +1,19 @@
+# GLOBAL BUILD SETTINGS
+[build]
+  # Directory where the Next.js app is located
+  base = "frontend"
+  
+  # Command to build your Next.js app
+  command = "npm run build"
+  
+  # The directory where Next.js outputs the build
+  publish = ".next"
+
+# (OPTIONAL BUT RECOMMENDED)
+# Redirect API calls to your external Python Backend
+# Replace the URL below with your actual deployed backend URL (e.g., Render/Railway)
+[[redirects]]
+  from = "/api/*"
+  to = "https://your-deployed-backend.com/api/:splat"
+  status = 200
+  force = true
